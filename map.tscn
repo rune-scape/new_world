@@ -1,4 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://chgaar2255wbv"]
+[gd_scene load_steps=7 format=3 uid="uid://chgaar2255wbv"]
+
+[ext_resource type="Script" path="res://char.gd" id="1_skkw4"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0knbo"]
 
@@ -14,6 +16,8 @@ item/0/navigation_layers = 1
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ugnww"]
 
+[sub_resource type="SphereMesh" id="SphereMesh_c1tip"]
+
 [node name="map" type="GridMap"]
 mesh_library = SubResource("MeshLibrary_r0x1l")
 cell_size = Vector3(1, 1, 1)
@@ -24,7 +28,15 @@ metadata/_editor_floor_ = Vector3(0, 0, 1)
 metadata/_edit_lock_ = true
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.43194, 0)
+script = ExtResource("1_skkw4")
+metadata/_edit_group_ = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.817905)
 shape = SubResource("CapsuleShape3D_ugnww")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+mesh = SubResource("SphereMesh_c1tip")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.81681)
