@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://chgaar2255wbv"]
+[gd_scene load_steps=8 format=3 uid="uid://chgaar2255wbv"]
 
 [ext_resource type="Script" path="res://char.gd" id="1_skkw4"]
+[ext_resource type="PackedScene" uid="uid://ydt0lg6o8pow" path="res://myfolder (=/kitty.glb" id="2_t5l30"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0knbo"]
 
@@ -40,3 +41,17 @@ mesh = SubResource("SphereMesh_c1tip")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.81681)
+
+[node name="KittyBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.86388, 0)
+script = ExtResource("1_skkw4")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="KittyBody3D"]
+shape = SubResource("CapsuleShape3D_ugnww")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="KittyBody3D"]
+mesh = SubResource("SphereMesh_c1tip")
+
+[node name="kitty" parent="KittyBody3D" instance=ExtResource("2_t5l30")]
+transform = Transform3D(-0.00143115, 0, -0.999999, 0, 1, 0, 0.999999, 0, -0.00143115, -1.09246, -4.86388, 2.2534)
