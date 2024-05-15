@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://chgaar2255wbv"]
 
 [ext_resource type="Script" path="res://char.gd" id="1_skkw4"]
-[ext_resource type="PackedScene" uid="uid://ydt0lg6o8pow" path="res://myfolder (=/kitty.glb" id="2_t5l30"]
+[ext_resource type="PackedScene" uid="uid://ch68bmhfrxl8e" path="res://myfolder (=/kitty1.tscn" id="2_d322a"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0knbo"]
 
@@ -20,30 +20,20 @@ item/0/navigation_layers = 1
 [sub_resource type="SphereMesh" id="SphereMesh_c1tip"]
 
 [node name="map" type="GridMap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00100744, 0.00842845, -0.00608635)
 mesh_library = SubResource("MeshLibrary_r0x1l")
 cell_size = Vector3(1, 1, 1)
 data = {
-"cells": PackedInt32Array(-65534, 0, 1441792, -65535, 0, 1441792, 1, 0, 1441792, 2, 0, 1441792, -131072, 0, 1441792, -65537, 0, 1441792, -65538, 0, 1441792, -65539, 0, 1441792, -65540, 0, 1441792, -65541, 0, 1441792, -131071, 0, 1441792, -131070, 0, 1441792, -65539, 1, 1441792, -65538, 1, 1441792, -65537, 1, 1441792, -131072, 1, 1441792, -65540, 1, 1441792, -65541, 1, 1441792, -131071, 1, 1441792, -131070, 1, 1441792)
+"cells": PackedInt32Array(-65534, 0, 1441792, -65535, 0, 1441792, 1, 0, 1441792, 2, 0, 1441792, -131072, 0, 1441792, -65537, 0, 1441792, -65538, 0, 1441792, -65539, 0, 1441792, -65540, 0, 1441792, -65541, 0, 1441792, -131071, 0, 1441792, -131070, 0, 1441792, -65539, 1, 1441792, -65538, 1, 1441792, -65537, 1, 1441792, -131072, 1, 1441792, -65540, 1, 1441792, -65541, 1, 1441792, -131071, 1, 1441792, -131070, 1, 1441792, 65533, 65534, 0, 65530, 65534, 0, 65527, 0, 0)
 }
-metadata/_editor_floor_ = Vector3(0, 0, 1)
+metadata/_editor_floor_ = Vector3(0, -1, 1)
 metadata/_edit_lock_ = true
-
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.43194, 0)
-script = ExtResource("1_skkw4")
-metadata/_edit_group_ = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
-shape = SubResource("CapsuleShape3D_ugnww")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
-mesh = SubResource("SphereMesh_c1tip")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.81681)
 
 [node name="KittyBody3D" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.86388, 0)
+transform = Transform3D(0.999833, 0, 0.0182551, 0, 1, 0, -0.0182551, 0, 0.999833, -1.11286, 1.69809, 1.10603)
 script = ExtResource("1_skkw4")
 metadata/_edit_group_ = true
 
@@ -53,5 +43,5 @@ shape = SubResource("CapsuleShape3D_ugnww")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="KittyBody3D"]
 mesh = SubResource("SphereMesh_c1tip")
 
-[node name="kitty" parent="KittyBody3D" instance=ExtResource("2_t5l30")]
-transform = Transform3D(-0.00143115, 0, -0.999999, 0, 1, 0, 0.999999, 0, -0.00143115, -1.09246, -4.86388, 2.2534)
+[node name="kitty" parent="KittyBody3D" instance=ExtResource("2_d322a")]
+transform = Transform3D(-4.28408e-08, 0, -1, 0, 1, 0, 1, 0, -4.28408e-08, 0, 0, 0)
