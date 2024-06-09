@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 @REM ()(:) #
 @REM "
 @echo [running as windows batch script]

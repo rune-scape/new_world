@@ -37,7 +37,7 @@ function FormatFileSize($num) {
     while ($num -gt 1kb) {
         $num = $num / 1kb
         $index++
-    } 
+    }
 
     "{0:N1}{1}" -f $num, $suffix[$index]
 }
@@ -45,7 +45,7 @@ function FormatFileSize($num) {
 function DownloadFile($Url, $OutFile) {
 	$uri = New-Object "System.Uri" "$Url"
 	$remoteFileName = $url.split('/') | Select -Last 1
-	
+
 	$targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList $OutFile, Create
 	if ($null -eq $targetStream) {
 		Write-Host " ~ could not create file: '$OutFile'" -ForegroundColor red
@@ -63,15 +63,15 @@ function DownloadFile($Url, $OutFile) {
 			Write-Host " ~ request timed out" -ForegroundColor red
 			throw
 		}
-		
+
 		$contentLength = $response.get_ContentLength()
-		
+
 		$responseStream = $response.GetResponseStream()
 		try {
 			if ($null -eq $responseStream) {
 				throw
 			}
-			
+
 			$buffer = new-object byte[] 100kb
 			$count = 0
 			$downloadedBytes = $count
@@ -103,12 +103,12 @@ function DownloadGodotBins($Url, $Dir, $ArchiveName, $ExpectedFiles) {
 	if ($HasSomeFiles -and !$HasAllFiles) {
 		Write-Host " ~ only some files are missing,, weird" -ForegroundColor yellow
 	}
-	
+
 	New-Item -ItemType "directory" -Force "$Dir" | Out-Null
 	if (!$?) {
 		throw
 	}
-	
+
 	$ArchivePath = Join-Path "$Dir" "$ArchiveName"
 	DownloadFile -Url "$Url" -OutFile "$ArchivePath"
 	& "$7zipExecutable" x "$ArchivePath" "-o$Dir"
@@ -145,7 +145,7 @@ try {
 			$CustomGodotRequiredFiles += $CustomGodotDebugSymbols
 		}
 		$HasAllRequiredFiles = @($CustomGodotRequiredFiles | ?{ !(Test-Path $_) }).count -eq 0
-		
+
 		$NeedToRemove = $false
 		$FilesToDownload = @($CustomGodotRequiredFiles | ?{ !(Test-Path $_) })
 		if ($UpdateTarget -In $CustomGodotActiveTargets) {
@@ -193,7 +193,7 @@ try {
 				}
 			} until ("$DownloadConfirmation" -eq "y")
 		}
-		
+
 		if ($NeedToRemove) {
 			Write-Host " ~ removing $UpdateTarget (version: '$CurrentGodotVersion')"
 			Remove-Item -Recurse -Force "$CustomGodotTargetDir" | Out-Null
@@ -201,24 +201,27 @@ try {
 				throw
 			}
 		}
-		
+
 		if ($FilesToDownload.count -gt 0) {
 			try {
 				$NeedsNewBinaries = @($CustomGodotBinaries | ?{ $_ -in $FilesToDownload }).count -gt 0
 				if ($NeedsNewBinaries) {
 					DownloadGodotBins -Url (Get-CustomGodotBinariesUrl -Target $UpdateTarget) -Dir $CustomGodotTargetDir -ArchiveName "$UpdateTarget.7z" -ExpectedFiles $CustomGodotBinaries
+					if ('linuxbsd' -eq $Platform) {
+						$CustomGodotBinaries | %{ chmod +x "$_" }
+					}
 				}
-				
+
 				$NeedsNewDebugSymbols = @($CustomGodotDebugSymbols | ?{ $_ -in $FilesToDownload }).count -gt 0
 				if ($IsMainTarget -and $DebugSymbols -and $NeedsNewDebugSymbols) {
 					DownloadGodotBins -Url (Get-CustomGodotDebugSymbolsUrl -Target $UpdateTarget) -Dir $CustomGodotTargetDir -ArchiveName "$UpdateTarget.debug_symbols.7z" -ExpectedFiles $CustomGodotDebugSymbols
 				}
-				
+
 				Write-CustomGodotMeta -Target $UpdateTarget
 			} catch {
-				if (Test-Path "$CustomGodotTargetDir") {
-					Remove-Item -Recurse -Force "$CustomGodotTargetDir" | Out-Null
-				}
+				#if (Test-Path "$CustomGodotTargetDir") {
+				#	Remove-Item -Recurse -Force "$CustomGodotTargetDir" | Out-Null
+				#}
 				throw
 			}
 		}

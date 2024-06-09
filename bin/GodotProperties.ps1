@@ -22,8 +22,8 @@ if ('' -eq $Platform) {
 }
 
 # rune updates this
-$CustomGodotVersion = '4.1.4.stable.custom_build.ad13268ad'
-$CustomGodotBranch = 'rune-custom-4.1'
+$CustomGodotVersion = '4.2.3.rc.custom_build.a45d9d793'
+$CustomGodotBranch = 'rune-custom-4.2'
 
 # dont change these
 $CustomGodotValidPlatforms = @('windows', 'linuxbsd')
@@ -95,12 +95,20 @@ function Get-CustomGodotTargetDir {
 
 function Get-CustomGodotBinaries {
 	Param([string] $Target)
-	Write-Output -NoEnumerate @($GodotBinarySuffixes | %{ Join-Path (Get-CustomGodotTargetDir -Target $Target) "godot.$Platform.$Target.$Arch.$CustomGodotBranch$_" })
+	if ('windows' -eq $Platform) {
+		Write-Output -NoEnumerate @($GodotBinarySuffixes | %{ Join-Path (Get-CustomGodotTargetDir -Target $Target) "godot.$Platform.$Target.$Arch.llvm.$CustomGodotBranch$_" })
+	} elseif ('linuxbsd' -eq $Platform) {
+		Write-Output -NoEnumerate @($GodotBinarySuffixes | %{ Join-Path (Get-CustomGodotTargetDir -Target $Target) "godot.$Platform.$Target.$Arch.$CustomGodotBranch$_" })
+	}
 }
 
 function Get-CustomGodotDebugSymbols {
 	Param([string] $Target)
-	Write-Output -NoEnumerate @($GodotDebugSymbolSuffixes | %{ Join-Path (Get-CustomGodotTargetDir -Target $Target) "godot.$Platform.$Target.$Arch.$CustomGodotBranch$_" })
+	if ('windows' -eq $Platform) {
+		Write-Output -NoEnumerate @($GodotDebugSymbolSuffixes | %{ Join-Path (Get-CustomGodotTargetDir -Target $Target) "godot.$Platform.$Target.$Arch.llvm.$CustomGodotBranch$_" })
+	} elseif ('linuxbsd' -eq $Platform) {
+		Write-Output -NoEnumerate @($GodotDebugSymbolSuffixes | %{ Join-Path (Get-CustomGodotTargetDir -Target $Target) "godot.$Platform.$Target.$Arch.$CustomGodotBranch$_" })
+	}
 }
 
 function Get-CustomGodotBinariesUrl {
