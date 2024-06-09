@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://du2qg1p5jwsjb"
+path="res://.godot/imported/animalwell_jungle.mp3-3db1e13b7f94dd4502ac1aebd38fb65e.mp3str"
+
+[deps]
+
+source_file="res://myfolder (=/animalwell_jungle.mp3"
+dest_files=["res://.godot/imported/animalwell_jungle.mp3-3db1e13b7f94dd4502ac1aebd38fb65e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

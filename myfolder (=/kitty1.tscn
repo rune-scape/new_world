@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ch68bmhfrxl8e"]
 
-[ext_resource type="PackedScene" uid="uid://s7ug5f3ftp72" path="res://myfolder (=/kitty.blend" id="1_8lpeu"]
+[ext_resource type="PackedScene" uid="uid://dxk70x81qh4nw" path="res://myfolder (=/kitty.blend" id="1_8lpeu"]
 
 [node name="kitty" instance=ExtResource("1_8lpeu")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)

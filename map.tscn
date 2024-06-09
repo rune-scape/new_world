@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://chgaar2255wbv"]
+[gd_scene load_steps=7 format=3 uid="uid://chgaar2255wbv"]
 
 [ext_resource type="Script" path="res://char.gd" id="1_skkw4"]
 [ext_resource type="PackedScene" uid="uid://ch68bmhfrxl8e" path="res://myfolder (=/kitty1.tscn" id="2_d322a"]
@@ -16,8 +16,9 @@ item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 
 item/0/navigation_layers = 1
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ugnww"]
-
-[sub_resource type="SphereMesh" id="SphereMesh_c1tip"]
+margin = 0.0
+radius = 0.3
+height = 1.0
 
 [node name="map" type="GridMap"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00100744, 0.00842845, -0.00608635)
@@ -33,15 +34,13 @@ metadata/_edit_lock_ = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.81681)
 
 [node name="KittyBody3D" type="CharacterBody3D" parent="."]
-transform = Transform3D(0.999833, 0, 0.0182551, 0, 1, 0, -0.0182551, 0, 0.999833, -1.11286, 1.69809, 1.10603)
+transform = Transform3D(0.999833, 0, 0.0182551, 0, 1, 0, -0.0182551, 0, 0.999833, 1.55694, -0.678786, 1.4795)
 script = ExtResource("1_skkw4")
 metadata/_edit_group_ = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="KittyBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0750071, 0.518522, 0.00136948)
 shape = SubResource("CapsuleShape3D_ugnww")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="KittyBody3D"]
-mesh = SubResource("SphereMesh_c1tip")
 
 [node name="kitty" parent="KittyBody3D" instance=ExtResource("2_d322a")]
 transform = Transform3D(-4.28408e-08, 0, -1, 0, 1, 0, 1, 0, -4.28408e-08, 0, 0, 0)
