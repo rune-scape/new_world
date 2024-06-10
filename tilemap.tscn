@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://70fprmovxux3"]
+[gd_scene load_steps=5 format=3 uid="uid://b1i2ko7ixhy25"]
 
-[ext_resource type="TileSet" uid="uid://d0cuycd3lyvyl" path="res://tileset.tres" id="1_dnwi1"]
+[ext_resource type="TileSet" uid="uid://dlw1yhupswmtu" path="res://tileset.tres" id="1_dnwi1"]
 [ext_resource type="Script" path="res://CharacterBody2D.gd" id="2_oqvr3"]
-[ext_resource type="Texture2D" uid="uid://btefslggmc3kp" path="res://myfolder (=/catstyle.png" id="2_wv7ic"]
+[ext_resource type="Texture2D" uid="uid://d0u0odtvsvl2" path="res://myfolder (=/catstyle.png" id="2_wv7ic"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mds1l"]
 
