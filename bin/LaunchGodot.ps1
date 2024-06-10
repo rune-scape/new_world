@@ -262,7 +262,7 @@ $GodotArgsStr = $GodotArgs -join ' '
 
 # cleanup old logs
 $OldLogThreshold = (Get-Date).AddDays(-1)
-Get-ChildItem -Path "$LogDir" -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.CreationTime -lt $OldLogThreshold } | Remove-Item -Force
+Get-ChildItem -Path "$LogDir" -Recurse -Force | Where-Object { !$_.PSIsContainer -and ($_.CreationTime -lt $OldLogThreshold) -and (".gitignore" -ne (Split-Path "$_" -leaf)) -and (".gdignore" -ne (Split-Path "$_" -leaf)) } | Remove-Item -Force
 
 $LogTimestamp = (Get-Date -Format o) -replace ":","-"
 $LogFile = (Join-Path "$LogDir" "log$LogTimestamp.txt")
