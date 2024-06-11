@@ -1,6 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://b1i2ko7ixhy25"]
+[gd_scene load_steps=10 format=3 uid="uid://b1i2ko7ixhy25"]
 
-[ext_resource type="TileSet" uid="uid://dlw1yhupswmtu" path="res://tileset.tres" id="1_dnwi1"]
+[ext_resource type="TileSet" uid="uid://d0cuycd3lyvyl" path="res://tileset.tres" id="1_dnwi1"]
 [ext_resource type="Script" path="res://CharacterBody2D.gd" id="2_oqvr3"]
 [ext_resource type="Texture2D" uid="uid://d0u0odtvsvl2" path="res://myfolder (=/catstyle.png" id="2_wv7ic"]
 [ext_resource type="Script" path="res://BodyAnimator.gd" id="4_srecg"]
@@ -39,6 +39,16 @@ texture = ExtResource("2_wv7ic")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
 shape = SubResource("RectangleShape2D_mds1l")
 
+[node name="BodyAnimator" type="Node2D" parent="CharacterBody2D"]
+script = ExtResource("4_srecg")
+
+[node name="legs" type="Node2D" parent="CharacterBody2D/BodyAnimator"]
+
+[node name="leg" type="Node2D" parent="CharacterBody2D/BodyAnimator/legs"]
+
+[node name="ikbone" type="Node2D" parent="CharacterBody2D/BodyAnimator"]
+script = ExtResource("5_vu2tw")
+
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
 visible = false
 position = Vector2(88, 217.952)
@@ -49,13 +59,3 @@ energy = 16.0
 position = Vector2(130.333, 204.667)
 texture = SubResource("GradientTexture2D_c451t")
 height = 30.0
-
-[node name="BodyAnimator" type="Node2D" parent="CharacterBody2D"]
-script = ExtResource("4_srecg")
-
-[node name="legs" type="Node2D" parent="CharacterBody2D/BodyAnimator"]
-
-[node name="leg" type="Node2D" parent="CharacterBody2D/BodyAnimator/legs"]
-
-[node name="ikbone" type="Node2D" parent="CharacterBody2D/BodyAnimator"]
-script = ExtResource("5_vu2tw")

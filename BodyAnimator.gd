@@ -9,18 +9,21 @@ func _init():
 	iklimb_add(Vector2(5,5),Vector2(5,20),2)
 	#for limb in iklimb_set:
 	#	print(limb.spos + " " + limb.ang + " " + limb.len)
+
+	pass
+func printTest():
 	var i = 0
 	for limb in iklimb_set:
 		print("Limb " + str(i))
 		for bone in limb:
-			print(bone.spos)
+			print(str(bone.spos)+","+str(bone.ang)+","+str(bone.len))
 		i += 1
-	pass
+		print(ikbone_getEndPos(iklimb_getEndBone(limb)))
 func _ready():
 	#legs = $legs.get_children()
 	
 	pass # Replace with function body.
-func iklimb_add(spos:Vector2,epos:Vector2,joints,vec:Vector2=Vector2(0,-1)):
+func iklimb_add(spos:Vector2,epos:Vector2,joints,vec:Vector2=Vector2(0,1)):
 	var limb = []
 	var dist = spos.distance_to(epos)
 	var i_dist = dist/joints
@@ -31,7 +34,7 @@ func iklimb_add(spos:Vector2,epos:Vector2,joints,vec:Vector2=Vector2(0,-1)):
 		var i_epos = cpos+(vec*i_dist)
 		var i_ang = (i_epos-i_spos).angle()
 		#epos=i_epos
-		var bone = {spos=i_spos,ang=i_ang,len=i_dist,inb=prev,outb=null}
+		var bone = {spos=i_spos,epos=i_epos,ang=i_ang,len=i_dist,inb=prev,outb=null}
 		if prev != null:
 			prev.outb = bone
 		prev = bone
@@ -52,15 +55,16 @@ func ikbone_getEndPos(bone):
 	return bone.spos+(Vector2.from_angle(bone.ang)*bone.len)
 func iklimb_endToRoot(limb,target:Vector2):
 	var currGoal = target
-	var currBone = limb.getEndBone(limb)
+	var currBone = iklimb_getEndBone(limb)
 	while currBone != null:
 		#currBone.ang = (Vector2.UP-(currGoal-currBone.spos)).angle()
 		currBone.ang = (currGoal-currBone.spos).angle()
-		currBone.spos = (Vector2.from_angle(currBone.ang)*-currBone.len)+currGoal
+		currBone.epos = currGoal
+		#currBone.spos = (Vector2.from_angle(currBone.ang)*-currBone.len)+currGoal
 		currGoal = currBone.spos
 		currBone = currBone.inb
 func iklimb_rootToEnd(limb,target:Vector2):
-	var currBone = limb.iklimb_getRootBone(limb)
+	var currBone = iklimb_getRootBone(limb)
 	var currPos = currBone.spos
 	while currBone != null:
 		currBone.spos = currPos
@@ -72,16 +76,20 @@ func iklimb_reach(limb,target:Vector2):
 	var i = 0
 	var endBone = iklimb_getEndBone(limb)
 	#while i<15 && abs(ikbone_getEndPos(endBone)-target) > 0.05:
-	while i<15 && ikbone_getEndPos(endBone).distance_to(target) < 0.05:
+	#print("Q " + str(ikbone_getEndPos(endBone).distance_to(target)))
+	while i<15 && ikbone_getEndPos(endBone).distance_to(target) > 0.05:
 		iklimb_endToRoot(limb,target)
 		iklimb_rootToEnd(limb,target)
 		i+=1
 func _process(delta):
 	global_position = Vector2(get_parent().global_position.x,get_parent().global_position.y)
 	var mousePos = get_global_mouse_position()
-	var reachPos =  Vector2.from_angle((global_position-mousePos).angle())*-15
+	var offset = iklimb_set[0][0].spos
+	var reachPos =  Vector2.from_angle(((global_position+offset)-mousePos).angle())*-15
 	TMPVAR = reachPos
+	#print(reachPos)
 	iklimb_reach(iklimb_set[0],reachPos)
+	#printTest()
 	queue_redraw()
 	pass
 func _draw():
@@ -89,6 +97,7 @@ func _draw():
 	for limb in iklimb_set:
 		for bone in limb:
 			draw_line(bone.spos,ikbone_getEndPos(bone),Color.WHITE,2)
+			#draw_line(bone.spos,bone.epos,Color.WHITE,2)
 	#for leg in legs:
 	#	var direct_state = PhysicsServer2D.space_get_direct_state(PhysicsServer2D.body_get_space(get_parent().get_rid()))
 	#	var ray = PhysicsRayQueryParameters2D.create(global_position,global_position+Vector2(0,5),0xFFFFFFFF,[self.get_parent().get_rid()])
