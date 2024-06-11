@@ -6,7 +6,7 @@ var TMPVAR = Vector2(0,0)
 func _init():
 	#addLeg()
 	#pos = Vector2(get_parent().global_position.x,get_parent().global_position.y)
-	iklimb_add(Vector2(5,5),Vector2(5,20),2)
+	iklimb_add(Vector2(0,0),Vector2(0,-90),28)
 	#for limb in iklimb_set:
 	#	print(limb.spos + " " + limb.ang + " " + limb.len)
 
@@ -18,11 +18,95 @@ func printTest():
 		for bone in limb:
 			print(str(bone.spos)+","+str(bone.ang)+","+str(bone.len))
 		i += 1
-		print(ikbone_getEndPos(iklimb_getEndBone(limb)))
+#		print(ikbone_getEndPos(iklimb_getEndBone(limb)))
 func _ready():
 	#legs = $legs.get_children()
 	
 	pass # Replace with function body.
+func iklimb_add(spos:Vector2,epos:Vector2,seg_cnt):
+	var limb = []
+	var vec = (epos-spos).normalized()
+	var len = spos.distance_to(epos)
+	var seg_len = len/seg_cnt
+	var cpos = spos
+	var prev = null
+	for i in seg_cnt:
+		var i_pos = cpos
+		var i_ang = vec.angle()
+		var seg = {pos=i_pos,ang=i_ang,len=seg_len,parent=prev,child=null}
+		if i == 0:
+			seg.lenmax = len
+			seg.rootpos = i_pos
+		if prev != null:
+			prev.child = seg
+		prev = seg
+		cpos = i_pos+(vec*seg_len)
+		limb.append(seg)
+	iklimb_set.append(limb)
+func ikseg_getEnd(seg):
+	return seg.pos+(Vector2.from_angle(seg.ang)*seg.len)
+func iklimb_getRoot(limb):
+	return limb[0]
+func iklimb_getEnd(limb):
+	return limb[len(limb)-1]
+func iklimb_updateIk(limb,target_final:Vector2):
+	var target = target_final
+	#var seg = iklimb_getRoot(limb)
+	#var dist = seg.rootpos.distance_to(target_final)
+	#if seg.pos.distance_to(target) > seg.lenmax-1:
+	#	target = seg.rootpos+((target_final-seg.rootpos).normalized()*(seg.lenmax-1))
+	var seg = iklimb_getEnd(limb)
+	while seg != null:
+		seg.ang = (target-seg.pos).angle()
+		seg.pos = target-(Vector2.from_angle(seg.ang)*seg.len)
+		target = seg.pos
+		seg = seg.parent
+func iklimb_correctIk(limb):
+	var seg = iklimb_getRoot(limb)
+	var rootpos = seg.rootpos
+	var pos = rootpos
+	while seg != null:
+		seg.pos = pos
+		pos = ikseg_getEnd(seg)
+		seg = seg.child
+func iklimb_reach(limb,target:Vector2):
+	var seg = iklimb_getRoot(limb)
+	var i = 0
+	while i<15 && ikseg_getEnd(seg).distance_to(target) > 0.05:
+		iklimb_updateIk(limb,target)
+		iklimb_correctIk(limb)
+		i+=1
+	
+func _process(delta):
+	var pos = Vector2(get_parent().global_position.x,get_parent().global_position.y)
+	var mousePos = get_global_mouse_position()
+	var reach = mousePos-pos
+	iklimb_reach(iklimb_set[0],reach)
+	queue_redraw()
+	#var offset = iklimb_set[0][0].spos
+	#var reachPos =  Vector2.from_angle(((global_position+offset)-mousePos).angle())*-15
+	#TMPVAR = reachPos
+	#print(reachPos)
+	#iklimb_reach(iklimb_set[0],reachPos)
+func _draw():
+	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
+	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
+	for limb in iklimb_set:
+		var i = 0
+		for seg in limb:
+			draw_line(seg.pos,ikseg_getEnd(seg),Color.WHITE,2)
+			i+=1
+"""
+func iklimb_endToRoot(limb,target:Vector2):
+	var currGoal = target
+	var currBone = iklimb_getEndBone(limb)
+	while currBone != null:
+		#currBone.ang = (Vector2.UP-(currGoal-currBone.spos)).angle()
+		currBone.ang = (currGoal-currBone.spos).angle()
+		currBone.epos = currGoal
+		#currBone.spos = (Vector2.from_angle(currBone.ang)*-currBone.len)+currGoal
+		currGoal = currBone.spos
+		currBone = currBone.inb
 func iklimb_add(spos:Vector2,epos:Vector2,joints,vec:Vector2=Vector2(0,1)):
 	var limb = []
 	var dist = spos.distance_to(epos)
@@ -92,11 +176,12 @@ func _process(delta):
 	#printTest()
 	queue_redraw()
 	pass
-func _draw():
-	draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
-	for limb in iklimb_set:
-		for bone in limb:
-			draw_line(bone.spos,ikbone_getEndPos(bone),Color.WHITE,2)
+"""
+#func _draw():
+	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
+#	for limb in iklimb_set:
+#		for seg in limb:
+			#draw_line(bone.spos,ikbone_getEndPos(bone),Color.WHITE,2)
 			#draw_line(bone.spos,bone.epos,Color.WHITE,2)
 	#for leg in legs:
 	#	var direct_state = PhysicsServer2D.space_get_direct_state(PhysicsServer2D.body_get_space(get_parent().get_rid()))
