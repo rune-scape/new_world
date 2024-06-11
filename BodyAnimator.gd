@@ -6,7 +6,7 @@ var TMPVAR = Vector2(0,0)
 func _init():
 	#addLeg()
 	#pos = Vector2(get_parent().global_position.x,get_parent().global_position.y)
-	iklimb_add(Vector2(5,5),Vector2(5,20),2)
+	iklimb_add(Vector2(0,0),Vector2(0,20),2)
 	#for limb in iklimb_set:
 	#	print(limb.spos + " " + limb.ang + " " + limb.len)
 
@@ -18,11 +18,38 @@ func printTest():
 		for bone in limb:
 			print(str(bone.spos)+","+str(bone.ang)+","+str(bone.len))
 		i += 1
-		print(ikbone_getEndPos(iklimb_getEndBone(limb)))
+#		print(ikbone_getEndPos(iklimb_getEndBone(limb)))
 func _ready():
 	#legs = $legs.get_children()
 	
 	pass # Replace with function body.
+func iklimb_add(spos:Vector2,epos:Vector2,seg_cnt):
+	var limb = []
+	var vec = (epos-spos).normalized()
+	var len = spos.distance_to(epos)
+	var seg_len = len/seg_cnt
+	var cpos = spos
+	var prev = null
+	for i in seg_cnt:
+		var i_pos = cpos
+		var i_ang = vec.angle()
+		var seg = {pos=i_pos,ang=i_ang,len=seg_len,parent=prev,child=null}
+		if prev != null:
+			prev.child = seg
+		prev = seg
+		cpos = i_pos
+		limb.append(seg)
+	iklimb_set.append(limb)
+func ikseg_getEnd(seg):
+	return seg.pos+(Vector2.from_angle(seg.ang)*seg.len)
+func _draw():
+	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
+	for limb in iklimb_set:
+		var i = 0
+		for seg in limb:
+			draw_line(seg.pos,ikseg_getEnd(seg),Color.WHITE if !i%2 else Color.BLACK,2)
+			i+=1
+"""
 func iklimb_add(spos:Vector2,epos:Vector2,joints,vec:Vector2=Vector2(0,1)):
 	var limb = []
 	var dist = spos.distance_to(epos)
@@ -92,11 +119,12 @@ func _process(delta):
 	#printTest()
 	queue_redraw()
 	pass
-func _draw():
-	draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
-	for limb in iklimb_set:
-		for bone in limb:
-			draw_line(bone.spos,ikbone_getEndPos(bone),Color.WHITE,2)
+"""
+#func _draw():
+	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
+#	for limb in iklimb_set:
+#		for seg in limb:
+			#draw_line(bone.spos,ikbone_getEndPos(bone),Color.WHITE,2)
 			#draw_line(bone.spos,bone.epos,Color.WHITE,2)
 	#for leg in legs:
 	#	var direct_state = PhysicsServer2D.space_get_direct_state(PhysicsServer2D.body_get_space(get_parent().get_rid()))

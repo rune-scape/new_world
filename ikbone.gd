@@ -1,3 +1,4 @@
+"""
 extends Node2D
 
 var l
@@ -36,3 +37,4 @@ func angle(p):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+"""
