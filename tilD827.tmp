@@ -32,7 +32,6 @@ position = Vector2(134.333, 184.333)
 script = ExtResource("2_oqvr3")
 
 [node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
-visible = false
 scale = Vector2(0.135, 0.135)
 texture = ExtResource("2_wv7ic")
 

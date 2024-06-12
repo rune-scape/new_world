@@ -1,3 +1,4 @@
+class_name BodyAnimator
 extends Node2D
 
 var iklimb_set = []
@@ -6,7 +7,8 @@ var TMPVAR = Vector2(0,0)
 func _init():
 	#addLeg()
 	#pos = Vector2(get_parent().global_position.x,get_parent().global_position.y)
-	iklimb_add(Vector2(0,0),Vector2(0,-90),28)
+	#iklimb_add(Vector2(0,0),Vector2(0,-40),8)
+	#iklimb_add(Vector2(0,0),Vector2(0,-40),8)
 	#for limb in iklimb_set:
 	#	print(limb.spos + " " + limb.ang + " " + limb.len)
 
@@ -51,17 +53,13 @@ func iklimb_getEnd(limb):
 	return limb[len(limb)-1]
 func iklimb_updateIk(limb,target_final:Vector2):
 	var target = target_final
-	#var seg = iklimb_getRoot(limb)
-	#var dist = seg.rootpos.distance_to(target_final)
-	#if seg.pos.distance_to(target) > seg.lenmax-1:
-	#	target = seg.rootpos+((target_final-seg.rootpos).normalized()*(seg.lenmax-1))
 	var seg = iklimb_getEnd(limb)
 	while seg != null:
 		seg.ang = (target-seg.pos).angle()
 		seg.pos = target-(Vector2.from_angle(seg.ang)*seg.len)
 		target = seg.pos
 		seg = seg.parent
-func iklimb_correctIk(limb):
+func iklimb_correctIk(limb,target):
 	var seg = iklimb_getRoot(limb)
 	var rootpos = seg.rootpos
 	var pos = rootpos
@@ -69,19 +67,28 @@ func iklimb_correctIk(limb):
 		seg.pos = pos
 		pos = ikseg_getEnd(seg)
 		seg = seg.child
-func iklimb_reach(limb,target:Vector2):
-	var seg = iklimb_getRoot(limb)
+func iklimb_follow(limb,target:Vector2):
+	var seg = iklimb_getEnd(limb)
 	var i = 0
-	while i<15 && ikseg_getEnd(seg).distance_to(target) > 0.05:
+	while i<4 && ikseg_getEnd(seg).distance_to(target) > 0.05:
 		iklimb_updateIk(limb,target)
-		iklimb_correctIk(limb)
 		i+=1
-	
+
+func iklimb_reach(limb,target:Vector2):
+	var seg = iklimb_getEnd(limb)
+	var i = 0
+	while i<4 && ikseg_getEnd(seg).distance_to(target) > 0.05:
+		iklimb_updateIk(limb,target)
+		iklimb_correctIk(limb,target)
+		i+=1
 func _process(delta):
-	var pos = Vector2(get_parent().global_position.x,get_parent().global_position.y)
-	var mousePos = get_global_mouse_position()
-	var reach = mousePos-pos
-	iklimb_reach(iklimb_set[0],reach)
+	#var pl = get_parent()
+	#var pl_pos = Vector2(pl.global_position.x,pl.global_position.y)
+	#var mousePos = get_global_mouse_position()
+	#var reach = iklimb_set[0][0].rootpos+Vector2(5,-10)
+	#var reach = mousePos-pl_pos
+	#iklimb_reach(iklimb_set[0],reach)
+	#iklimb_follow(iklimb_set[0],Vector2(2,2))
 	queue_redraw()
 	#var offset = iklimb_set[0][0].spos
 	#var reachPos =  Vector2.from_angle(((global_position+offset)-mousePos).angle())*-15
@@ -91,10 +98,12 @@ func _process(delta):
 func _draw():
 	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
 	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
+	var pl = get_parent()
+	var pl_pos = Vector2(pl.global_position.x,pl.global_position.y)
 	for limb in iklimb_set:
 		var i = 0
 		for seg in limb:
-			draw_line(seg.pos,ikseg_getEnd(seg),Color.WHITE,2)
+			draw_line(seg.pos-pl_pos,ikseg_getEnd(seg)-pl_pos,Color.WHITE,2)
 			i+=1
 """
 func iklimb_endToRoot(limb,target:Vector2):
