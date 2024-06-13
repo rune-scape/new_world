@@ -24,10 +24,12 @@ func _physics_process(delta):
 			jump = true
 	
 	if Input.is_action_just_pressed("ui_down"):
-		scale.y = 0.5
+		$CollisionShape2D.scale.y = 0.5
+		$Sprite2D.scale.y = 0.135 * 0.5
 		position.y += $CollisionShape2D.shape.size.y/4
 	if Input.is_action_just_released("ui_down"):
-		scale.y = 1.0
+		$CollisionShape2D.scale.y = 1.0
+		$Sprite2D.scale.y = 0.135 * 1.0
 		position.y -= $CollisionShape2D.shape.size.y/4
 	
 	# Get the input direction and handle the movement/deceleration.
