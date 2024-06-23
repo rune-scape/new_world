@@ -1,4 +1,5 @@
 .sconsign.dblite
 .vs
-.godot/
+.godot
 !.godot/uid_cache.bin
+*.tmp
