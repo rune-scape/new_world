@@ -1,0 +1,7 @@
+.idea/
+*.obj
+*.pdb
+*.exp
+*.ilk
+*.lib
+*.os
