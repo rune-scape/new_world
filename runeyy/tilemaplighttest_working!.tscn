@@ -1,13 +1,14 @@
-[gd_scene load_steps=15 format=3 uid="uid://b2xltrii7g1vq"]
+[gd_scene load_steps=16 format=3 uid="uid://b2xltrii7g1vq"]
 
 [ext_resource type="TileSet" uid="uid://d0cuycd3lyvyl" path="res://tileset.tres" id="2_akuh7"]
 [ext_resource type="Script" path="res://CharacterBody2D.gd" id="3_mg1ja"]
 [ext_resource type="Texture2D" uid="uid://d0u0odtvsvl2" path="res://myfolder (=/catstyle.png" id="4_jo113"]
 [ext_resource type="Script" path="res://BodyAnimator.gd" id="5_3svml"]
 [ext_resource type="Script" path="res://tail.gd" id="6_ywm1q"]
-[ext_resource type="Script" path="res://RunePointLight2D.gd" id="7_x0pi4"]
-[ext_resource type="Shader" path="res://tilemaplighttest.gdshader" id="7_yjfb6"]
-[ext_resource type="Script" path="res://render_shadows.gd" id="8_4xrrb"]
+[ext_resource type="Script" path="res://runeyy/follow_cursor.gd" id="7_0rjsc"]
+[ext_resource type="Script" path="res://runeyy/RunePointLight2D.gd" id="7_x0pi4"]
+[ext_resource type="Shader" path="res://runeyy/tilemaplighttest_working.gdshader" id="7_yjfb6"]
+[ext_resource type="Script" path="res://runeyy/shadow_render_old.gd" id="8_4xrrb"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ss7f"]
 
@@ -34,10 +35,10 @@ resource_local_to_scene = true
 shader = ExtResource("7_yjfb6")
 shader_parameter/fg_height = null
 shader_parameter/bg_height = null
-shader_parameter/light_pos1 = Vector3(228, 188, 10)
-shader_parameter/light_pos2 = Vector3(208, 198, 30)
-shader_parameter/light_pos3 = Vector3(258, 188, 40)
-shader_parameter/light_pos4 = Vector3(228, 148, 20)
+shader_parameter/light_pos1 = Vector3(208, 198, 30)
+shader_parameter/light_pos2 = Vector3(228, 148, 20)
+shader_parameter/light_pos3 = Vector3(108.74, 248.117, 10)
+shader_parameter/light_pos4 = Vector3(503.876, 112.298, 40)
 shader_parameter/level_tex = SubResource("ViewportTexture_tijtc")
 
 [node name="Control" type="Control"]
@@ -98,10 +99,11 @@ script = ExtResource("6_ywm1q")
 
 [node name="PointLight2D" type="PointLight2D" parent="SubViewportContainer/SubViewport/TileMap/CharacterBody2D/Node2D"]
 show_behind_parent = true
+position = Vector2(-119.26, 60.1174)
 energy = 0.75
 texture = SubResource("GradientTexture2D_c451t")
 height = 10.0
-script = ExtResource("7_x0pi4")
+script = ExtResource("7_0rjsc")
 
 [node name="PointLight2D2" type="PointLight2D" parent="SubViewportContainer/SubViewport/TileMap/CharacterBody2D/Node2D"]
 show_behind_parent = true
@@ -121,7 +123,7 @@ script = ExtResource("7_x0pi4")
 
 [node name="PointLight2D4" type="PointLight2D" parent="SubViewportContainer/SubViewport/TileMap/CharacterBody2D/Node2D"]
 show_behind_parent = true
-position = Vector2(30, 0)
+position = Vector2(275.876, -75.7016)
 energy = 0.75
 texture = SubResource("GradientTexture2D_c451t")
 height = 40.0

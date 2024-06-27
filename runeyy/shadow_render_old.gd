@@ -6,10 +6,16 @@ extends ColorRect
 @export var tilemap_bg: TileMap
 
 func _process(delta):
-	RunePointLight2D.all_lights.sort_custom(
+	var all_lights := get_tree().get_nodes_in_group(RunePointLight2D.group_name)
+	# prioritize lights closer to the character 
+	all_lights.sort_custom(
 		func(a: RunePointLight2D, b: RunePointLight2D):
-			return (a.global_position - character.global_position).length() < (b.global_position - character.global_position).length())
-	var lights = RunePointLight2D.all_lights.slice(0, 32)
+			if a.priority == b.priority:
+				return (a.global_position - character.global_position).length() < (b.global_position - character.global_position).length()
+			else:
+				return a.priority > b.priority
+	)
+	var lights = all_lights.slice(0, 32)
 	
 	var source_mat := material as ShaderMaterial
 	for vpi in 1:
