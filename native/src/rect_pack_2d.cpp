@@ -8,7 +8,7 @@
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
-#include "../rectpack2D/src/finders_interface.h"
+#include "../libs/rectpack2D/src/finders_interface.h"
 
 namespace godot {
 

@@ -1,7 +1,7 @@
 [submodule "native/godot-cpp"]
-	path = native/godot-cpp
+	path = native/libs/godot-cpp
 	url = https://github.com/rune-scape/godot-cpp.git
 	branch = 4.2
 [submodule "native/rectpack2D"]
-	path = native/rectpack2D
+	path = native/libs/rectpack2D
 	url = https://github.com/TeamHypersomnia/rectpack2D.git
