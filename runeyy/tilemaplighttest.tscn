@@ -121,12 +121,13 @@ texture = SubResource("GradientTexture2D_dikt0")
 height = 20.0
 
 [node name="PointLight2D4" type="Node2D" parent="TileMap2"]
-visible = false
 show_behind_parent = true
-position = Vector2(271, 190)
+position = Vector2(136.233, -36.5359)
+scale = Vector2(2.25, 2.25)
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_4qx7s")
 height = 30.0
+follow = true
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="TileMap2"]
 visible = false
@@ -135,7 +136,8 @@ rotation = 1.59872
 energy = 16.0
 
 [node name="PointLight2D3" type="Node2D" parent="TileMap2"]
-position = Vector2(84.5357, -81.6188)
+visible = false
+position = Vector2(136.233, -36.5359)
 rotation = 0.797615
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_mkiys")

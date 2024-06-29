@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 			if a.priority != b.priority:
 				return a.priority > b.priority
 			else:
-				return (a.global_position - character.global_position).length() < (b.global_position - character.global_position).length()
+				return (a.global_position - character.global_position).length_squared() < (b.global_position - character.global_position).length_squared()
 	)
 	
 	var unpacked_light_rects: Array
@@ -80,6 +80,7 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 		var c: ShadowRegionRenderer = regions_parent.get_child(i)
 		var rect: Rect2i = packed_rects[i]
 		c.position = Vector2(rect.position)
+		c.color = Color(Color.from_hsv(randf(), 1.0, 1.0), 0.25)
 		c.size = Vector2(rect.size)
 		c.tilemap_fg = tilemap_fg
 		c.tilemap_bg = tilemap_bg

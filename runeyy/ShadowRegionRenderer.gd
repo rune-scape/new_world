@@ -12,6 +12,9 @@ func _process(delta: float) -> void:
 
 var _normals_cache := {}
 func _draw() -> void:
+	var bot_shadow_color := Color.RED
+	var top_shadow_color := Color.GREEN
+	
 	draw_rect(Rect2(light.global_position - Vector2(light_rect.position), Vector2(1, 1)), Color.BLUE)
 	
 	var tile_top_height: float = tilemap_fg.get_layer_z_index(0)
@@ -30,68 +33,87 @@ func _draw() -> void:
 		top_scale = size.x * size.y # just a lazy value that will always be large enough but not toooooo big
 	else:
 		top_scale = (light.height - bg_height) / light_distance_to_top
-	var top_xform := tilemap_xform.translated(-light_gpos).scaled(Vector2.ONE * top_scale).translated(light_lpos)
+	var top_shadow_xform := Transform2D.IDENTITY.translated(-light_lpos).scaled(Vector2.ONE * top_scale).translated(light_lpos)
 	
 	var start_tile_coords := tilemap_fg.local_to_map(tilemap_fg.to_local(light_rect.position))
 	var end_tile_coords := tilemap_fg.local_to_map(tilemap_fg.to_local(light_rect.end))
-	var current_tile_coords := start_tile_coords
-	while current_tile_coords.y <= end_tile_coords.y:
-		while current_tile_coords.x <= end_tile_coords.x:
-			var tile_data := tilemap_fg.get_cell_tile_data(0, current_tile_coords)
-			if tile_data != null:
-				var occluder := tile_data.get_occluder(0)
-				if occluder != null:
-					var tile_pos := tilemap_fg.map_to_local(current_tile_coords) + Vector2(tile_data.texture_origin)
-					var polygons: Array[PackedVector2Array] = Geometry2D.decompose_polygon_in_convex(occluder.polygon)
-					for polygon in polygons:
-						var normalsvar = _normals_cache.get(polygon)
-						var normals: PackedVector2Array
-						if normalsvar != null:
-							normals = normalsvar
-						else:
-							normals.resize(polygon.size())
-							for i in polygon.size():
-								normals[i] = (polygon[i+1-polygon.size()] - polygon[i]).orthogonal().normalized()
-							_normals_cache[polygon] = normals
-						
-						var tile_depth := 2
-						var tile_bot_height := bg_height
-						if tile_depth < 0:
-							tile_bot_height = bg_height
-						else:
-							tile_bot_height = tile_top_height - tile_depth
-						var tile_bot_scale := (light.height - bg_height) / (light.height - tile_bot_height)
-						var tile_bot_xform := tilemap_xform.translated(-light_gpos).scaled(Vector2.ONE * tile_bot_scale).translated(light_gpos-Vector2(light_rect.position))
-						
-						var top_shadow_polygon := top_xform.translated_local(tile_pos) * polygon
-						var bot_shadow_polygon := tile_bot_xform.translated_local(tile_pos) * polygon
-						var polygon_out: PackedVector2Array
-						var polygon_colors: PackedColorArray
-						var last_facing_light := normals[-1].dot(bot_shadow_polygon[-1] - light_lpos) < 0
-						for i in polygon.size():
-							var facing_light := normals[i].dot(bot_shadow_polygon[i] - light_lpos) < 0
-							if facing_light:
-								if facing_light != last_facing_light:
-									polygon_out.push_back(top_shadow_polygon[i])
-									polygon_colors.push_back(Color.GREEN)
-								polygon_out.push_back(bot_shadow_polygon[i])
-								polygon_colors.push_back(Color.RED)
-							else:
-								if facing_light != last_facing_light:
-									polygon_out.push_back(bot_shadow_polygon[i])
-									polygon_colors.push_back(Color.RED)
-								polygon_out.push_back(top_shadow_polygon[i])
-								polygon_colors.push_back(Color.GREEN)
-							
-							last_facing_light = facing_light
-						#print(polygon_out)
-						draw_polygon(polygon_out, polygon_colors)
-						draw_colored_polygon(top_shadow_polygon, Color(Color.GREEN, 1.0))
-						draw_colored_polygon(bot_shadow_polygon, Color(Color.RED, 1.0))
-						draw_polyline(tilemap_xform.translated_local(tile_pos).translated(-light_rect.position) * polygon, Color.BLUE_VIOLET)
-						for i in polygon.size():
-							var center := tilemap_xform.translated_local(tile_pos).translated(-light_rect.position) * ((polygon[i] + polygon[i + 1 - polygon.size()]) / 2.0)
-							draw_line(center, center + normals[i] * 10, Color.FUCHSIA)
-			current_tile_coords.x += 1
-		current_tile_coords.x = start_tile_coords.x
-		current_tile_coords.y += 1
+	var light_tile_coords := tilemap_fg.local_to_map(tilemap_fg.to_local(light.global_position))
+	
+	var tile_coords: Array[Vector2i]
+	for x in range(start_tile_coords.x, end_tile_coords.x+1):
+		for y in range(start_tile_coords.y, end_tile_coords.y+1):
+			tile_coords.push_back(Vector2i(x, y))
+	tile_coords.sort_custom(
+		func(a: Vector2i, b: Vector2i):
+			return (a - light_tile_coords).length_squared() > (b - light_tile_coords).length_squared()
+	)
+	
+	for ti in tile_coords:
+		#print(current_tile_coords)
+		var tile_data := tilemap_fg.get_cell_tile_data(0, ti)
+		if tile_data == null:
+			continue
+		var occluder := tile_data.get_occluder(0)
+		if occluder == null:
+			continue
+		var tile_pos := tilemap_fg.map_to_local(ti) + Vector2(tile_data.texture_origin)
+		var tile_local_xform := tilemap_xform.translated_local(tile_pos).translated(-light_rect.position)
+		var polygons: Array[PackedVector2Array] = Geometry2D.decompose_polygon_in_convex(occluder.polygon)
+		for src_polygon in polygons:
+			var normalsvar = _normals_cache.get(src_polygon)
+			var normals: PackedVector2Array
+			if normalsvar != null:
+				normals = normalsvar
+			else:
+				normals.resize(src_polygon.size())
+				for i in src_polygon.size():
+					normals[i] = (src_polygon[i+1-src_polygon.size()] - src_polygon[i]).orthogonal().normalized()
+					#normals[i] = (src_polygon[i] - src_polygon[i-1]).orthogonal().normalized()
+				_normals_cache[src_polygon] = normals
+			
+			var polygon := tile_local_xform * src_polygon
+			var tile_depth := 4
+			var tile_bot_height := bg_height
+			if tile_depth < 0:
+				tile_bot_height = bg_height
+			else:
+				tile_bot_height = tile_top_height - tile_depth
+			var bot_shadow_scale := (light.height - bg_height) / (light.height - tile_bot_height)
+			var bot_shadow_xform := Transform2D.IDENTITY.translated(-light_lpos).scaled(Vector2.ONE * bot_shadow_scale).translated(light_lpos)
+			
+			var top_shadow_polygon: PackedVector2Array
+			var bot_shadow_polygon: PackedVector2Array
+			var middle_shadow_polygon: PackedVector2Array
+			var middle_shadow_polygon_colors: PackedColorArray
+			var last_facing_light := normals[-1].dot(polygon[-1] - light_lpos) < 0
+			for i in polygon.size():
+				var facing_light := normals[i].dot(polygon[i] - light_lpos) < 0
+				if facing_light:
+					if facing_light != last_facing_light:
+						middle_shadow_polygon.push_back(top_shadow_xform * polygon[i])
+						middle_shadow_polygon_colors.push_back(top_shadow_color)
+						middle_shadow_polygon.push_back(bot_shadow_xform * polygon[i])
+						middle_shadow_polygon_colors.push_back(bot_shadow_color)
+						top_shadow_polygon.push_back(top_shadow_xform * polygon[i])
+					bot_shadow_polygon.push_back(bot_shadow_xform * polygon[i])
+				else:
+					if facing_light != last_facing_light:
+						middle_shadow_polygon.push_back(bot_shadow_xform * polygon[i])
+						middle_shadow_polygon_colors.push_back(bot_shadow_color)
+						middle_shadow_polygon.push_back(top_shadow_xform * polygon[i])
+						middle_shadow_polygon_colors.push_back(top_shadow_color)
+						bot_shadow_polygon.push_back(bot_shadow_xform * polygon[i])
+					top_shadow_polygon.push_back(top_shadow_xform * polygon[i])
+				
+				last_facing_light = facing_light
+			#print(polygon_out)
+			if bot_shadow_polygon.size() >= 3:
+				draw_colored_polygon(bot_shadow_polygon, bot_shadow_color)
+			if top_shadow_polygon.size() >= 3:
+				draw_colored_polygon(top_shadow_polygon, top_shadow_color)
+			if middle_shadow_polygon.size() >= 3:
+				draw_polygon(middle_shadow_polygon, middle_shadow_polygon_colors)
+			#draw_polyline(tilemap_xform.translated_local(tile_pos).translated(-light_rect.position) * polygon, Color.BLUE_VIOLET)
+			#for i in polygon.size():
+			#	var center := tilemap_xform.translated_local(tile_pos).translated(-light_rect.position) * ((polygon[i] + polygon[i + 1 - polygon.size()]) / 2.0)
+			#	draw_line(center, center + normals[i] * 10, Color.FUCHSIA)
