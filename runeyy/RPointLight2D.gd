@@ -4,12 +4,14 @@ class_name RPointLight2D extends Node2D
 static var group_name := &"rpoint_lights"
 @export var texture: Texture2D
 @export var offset: Vector2
-@export var size: float
+@export var light_size: float
 @export var height: float = 0
 @export var color: Color = Color.WHITE
 @export_range(0, 360, 0.1, "radians_as_degrees") var range: float = PI*2
 @export var priority := 0
 @export var follow: bool = false
+
+var renderer: ShadowRegionRenderer
 
 func _ready() -> void:
 	add_to_group(group_name)
@@ -30,11 +32,12 @@ when visibility_changed:
 		remove_from_group(group_name)
 
 func _draw():
-	if range < 2*PI:
-		draw_line(Vector2(0,0), Vector2(25, 0).rotated(range/2), Color.AQUAMARINE)
-		draw_line(Vector2(0,0), Vector2(25, 0).rotated(-range/2), Color.AQUAMARINE)
-	#draw_set_transform_matrix(global_transform.inverse())
-	draw_rect(get_local_rect(), Color.DARK_SALMON, false)
+	if Engine.is_editor_hint():
+		if range < 2*PI:
+			draw_line(Vector2(0,0), Vector2(25, 0).rotated(range/2), Color.AQUAMARINE)
+			draw_line(Vector2(0,0), Vector2(25, 0).rotated(-range/2), Color.AQUAMARINE)
+		#draw_set_transform_matrix(global_transform.inverse())
+		draw_rect(get_local_rect(), Color.DARK_SALMON, false)
 
 func get_local_rect() -> Rect2:
 	var real_tex_size := texture.get_size()

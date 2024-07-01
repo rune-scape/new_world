@@ -1,32 +1,43 @@
 @tool
 extends SubViewport
 
-@export var atlas_size: int = 1000
-@export var character: Node2D
-@export var tilemap_fg: TileMap
-@export var tilemap_bg: TileMap
+@export var atlas_size: int = 512
 
-func _ready() -> void:
-	var result := []
-	var packed_size := RectPack2D.pack(result, [Vector2(1000, 1000)], 1000)
-	#print("packed_size: ", packed_size, " result: ", result)
+var character: Node2D
+var tilemap_fg: TileMap
+var tilemap_bg: TileMap
+var light_rects := {}
 
-func _process(_delta: float) -> void:
+#func _process(_delta: float) -> void:
+#	_after_process()
+
+#@onready
+#when (get_tree().process_frame):
+	#_after_process()
+
+func _process(delta: float) -> void:
 	size = Vector2i(atlas_size, atlas_size)
 	var unpacked_lights: Array = get_tree().get_nodes_in_group(RPointLight2D.group_name)
+	for l in unpacked_lights:
+		l.renderer = null
+	
+	if not unpacked_lights.is_empty() and (tilemap_fg == null or tilemap_bg == null):
+		push_warning("can't render lights without tilemap")
+		unpacked_lights.clear()
 	
 	unpacked_lights = unpacked_lights.filter(
 		func(a: RPointLight2D):
 			return a.visible
 	)
-	# prioritize lights closer to the character 
-	unpacked_lights.sort_custom(
-		func(a: RPointLight2D, b: RPointLight2D):
-			if a.priority != b.priority:
-				return a.priority > b.priority
-			else:
-				return (a.global_position - character.global_position).length_squared() < (b.global_position - character.global_position).length_squared()
-	)
+	if character != null:
+		# prioritize lights closer to the character
+		unpacked_lights.sort_custom(
+			func(a: RPointLight2D, b: RPointLight2D):
+				if a.priority != b.priority:
+					return a.priority > b.priority
+				else:
+					return (a.global_position - character.global_position).length_squared() < (b.global_position - character.global_position).length_squared()
+		)
 	
 	var unpacked_light_rects: Array
 	unpacked_light_rects.resize(unpacked_lights.size())
@@ -37,13 +48,18 @@ func _process(_delta: float) -> void:
 		rect_snapped.end = Vector2i(rect.end.ceil())
 		unpacked_light_rects[i] = rect_snapped
 	
-	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsR, Color(1, 0, 0, 0.5))
-	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsG, Color(0, 1, 0, 0.5))
-	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsB, Color(0, 0, 1, 0.5))
+	# try packing as many into each color channel, overflowing if needed
+	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsR, Color(1, 0, 0, 0))
+	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsG, Color(0, 1, 0, 0))
+	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsB, Color(0, 0, 1, 0))
+	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsA, Color(0, 0, 0, 1))
 
 func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array, regions_parent: Node, channel: Color):
 	if unpacked_lights.size() != unpacked_light_rects.size():
 		push_error("unpacked_lights.size() != unpacked_region_sizes.size()")
+		return
+	
+	if unpacked_lights.is_empty():
 		return
 	
 	var packed_rects := []
@@ -69,21 +85,27 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 	if size_diff > 0:
 		for i in size_diff:
 			var n := ShadowRegionRenderer.new()
-			n.color = Color.TRANSPARENT
-			n.clip_contents = true
 			regions_parent.add_child(n)
 	elif -size_diff > packed_rects.size()*2:
 		for i in -size_diff:
 			regions_parent.remove_child(regions_parent.get_child(0))
 	
-	for i in packed_rects.size():
+	for i in regions_parent.get_child_count():
 		var c: ShadowRegionRenderer = regions_parent.get_child(i)
+		if i >= packed_rects.size():
+			c.visible = false
+			continue
+		
+		c.visible = true
+		c.queue_redraw()
 		var rect: Rect2i = packed_rects[i]
 		c.position = Vector2(rect.position)
-		c.color = Color(Color.from_hsv(randf(), 1.0, 1.0), 0.25)
+		c.debug = true
 		c.size = Vector2(rect.size)
-		c.tilemap_fg = tilemap_fg
-		c.tilemap_bg = tilemap_bg
+		c.tilemap = tilemap_fg
+		c.fg_height = tilemap_fg.get_layer_z_index(0)
+		c.bg_height = tilemap_bg.get_layer_z_index(0)
 		c.light = packed_lights[i]
+		c.light.renderer = c
 		c.channel = channel
 		c.light_rect = packed_light_rects[i]
