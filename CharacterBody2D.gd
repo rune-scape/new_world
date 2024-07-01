@@ -26,11 +26,13 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("ui_down"):
 		$CollisionShape2D.scale.y = 0.5
 		$Sprite2D.scale.y = 0.135 * 0.5
-		position.y += $CollisionShape2D.shape.size.y/4
+		if is_on_floor():
+			position.y += $CollisionShape2D.shape.size.y/2.0 * 0.5
 	if Input.is_action_just_released("ui_down"):
 		$CollisionShape2D.scale.y = 1.0
 		$Sprite2D.scale.y = 0.135 * 1.0
-		position.y -= $CollisionShape2D.shape.size.y/4
+		if is_on_floor():
+			position.y -= $CollisionShape2D.shape.size.y/2.0 * 0.5
 	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
@@ -45,5 +47,4 @@ func _physics_process(delta):
 	#	if abs(velocity.x) > 0.05:
 	#		velocity.x = move_toward(velocity.x,0,SPEED/deccel)
 	
-
 	move_and_slide()
