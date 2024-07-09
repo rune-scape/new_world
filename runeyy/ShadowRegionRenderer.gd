@@ -6,7 +6,6 @@ var tilemap: TileMap
 var fg_height: float
 var bg_height: float
 var light: RPointLight2D
-var light_pos: Vector2
 var light_rect: Rect2i
 var channel: Color
 var debug: bool = false
@@ -25,7 +24,6 @@ func _draw() -> void:
 		draw_rect(Rect2(light.global_position - Vector2(light_rect.position), Vector2(1, 1)), Color.BLUE)
 	
 	#_meshes.clear()
-	light_pos = light.global_position
 	RenderingServer.canvas_item_set_custom_rect(get_canvas_item(), true, Rect2(Vector2.ZERO, size))
 	RenderingServer.canvas_item_set_clip(get_canvas_item(), true)
 	
@@ -114,13 +112,12 @@ func _draw() -> void:
 		else:
 			src_polygon = occluder.polygon
 			
-			normals.resize(src_polygon.size())
 			if Geometry2D.is_polygon_clockwise(src_polygon):
-				for v in src_polygon.size():
-					normals[v] = (src_polygon[v+1-src_polygon.size()] - src_polygon[v]).normalized().orthogonal().rotated(PI)
-			else:
-				for v in src_polygon.size():
-					normals[v] = (src_polygon[v+1-src_polygon.size()] - src_polygon[v]).normalized().orthogonal()
+				src_polygon.reverse()
+			
+			normals.resize(src_polygon.size())
+			for v in src_polygon.size():
+				normals[v] = (src_polygon[v+1-src_polygon.size()] - src_polygon[v]).normalized().orthogonal()
 			
 			cache_var = {
 				polygon = src_polygon,

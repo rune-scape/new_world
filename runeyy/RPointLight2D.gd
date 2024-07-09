@@ -36,8 +36,6 @@ func _draw():
 		if range < 2*PI:
 			draw_line(Vector2(0,0), Vector2(25, 0).rotated(range/2), Color.AQUAMARINE)
 			draw_line(Vector2(0,0), Vector2(25, 0).rotated(-range/2), Color.AQUAMARINE)
-		#draw_set_transform_matrix(global_transform.inverse())
-		draw_rect(get_local_rect(), Color.DARK_SALMON, false)
 
 func get_local_rect() -> Rect2:
 	var real_tex_size := texture.get_size()

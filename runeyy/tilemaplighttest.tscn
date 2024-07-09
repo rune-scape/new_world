@@ -1,15 +1,27 @@
-[gd_scene load_steps=17 format=3 uid="uid://b3db3c4ltvam"]
+[gd_scene load_steps=20 format=3 uid="uid://b3db3c4ltvam"]
 
 [ext_resource type="TileSet" uid="uid://d0cuycd3lyvyl" path="res://tileset.tres" id="1_3kx18"]
 [ext_resource type="Script" path="res://runeyy/tilemaplighttest8b8weryuifg.gd" id="1_64gdk"]
 [ext_resource type="Script" path="res://CharacterBody2D.gd" id="3_7gibm"]
+[ext_resource type="Shader" path="res://runeyy/lights_and_shadows.gdshader" id="3_47ahi"]
+[ext_resource type="Script" path="res://runeyy/ShadowDrawTest.gd" id="3_w4imu"]
 [ext_resource type="Texture2D" uid="uid://d0u0odtvsvl2" path="res://myfolder (=/catstyle.png" id="4_lr8fi"]
 [ext_resource type="Script" path="res://BodyAnimator.gd" id="5_ni4gn"]
 [ext_resource type="Script" path="res://tail.gd" id="6_kaknb"]
 [ext_resource type="Script" path="res://runeyy/gyhr3uieqybgbgr.gd" id="7_8c6bp"]
 [ext_resource type="Script" path="res://runeyy/RPointLight2D.gd" id="7_mgipv"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ln1xt"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_4gv2m"]
+viewport_path = NodePath(".")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_stxqw"]
+shader = ExtResource("3_47ahi")
+shader_parameter/light_count = null
+shader_parameter/shadow_rects = null
+shader_parameter/shadow_channels = null
+shader_parameter/shadow_light_positions = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 256)
+shader_parameter/light_positions = PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1709, -25, 0)
+shader_parameter/shadow_atlas = SubResource("ViewportTexture_4gv2m")
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ss7f"]
 light_mode = 1
@@ -64,13 +76,14 @@ script = ExtResource("1_64gdk")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
-material = SubResource("ShaderMaterial_ln1xt")
+material = SubResource("ShaderMaterial_stxqw")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_w4imu")
 
 [node name="Sprite2D" type="Node2D" parent="." node_paths=PackedStringArray("light")]
 process_priority = 100
@@ -81,7 +94,7 @@ light = NodePath("../TileMap2/CharacterBody2D/Node2D/PointLight2D")
 
 [node name="Sprite2D2" type="Node2D" parent="." node_paths=PackedStringArray("light")]
 process_priority = 100
-position = Vector2(233.669, 113.711)
+position = Vector2(1709, -25)
 script = ExtResource("7_8c6bp")
 light = NodePath("../TileMap2/PointLight2D4")
 
@@ -138,7 +151,7 @@ height = 20.0
 
 [node name="PointLight2D4" type="Node2D" parent="TileMap2"]
 show_behind_parent = true
-position = Vector2(233.669, 113.711)
+position = Vector2(1709, -25)
 scale = Vector2(4, 4)
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_4qx7s")
@@ -154,7 +167,7 @@ energy = 16.0
 
 [node name="PointLight2D3" type="Node2D" parent="TileMap2"]
 visible = false
-position = Vector2(233.669, 113.711)
+position = Vector2(1709, -25)
 rotation = 0.797615
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_mkiys")

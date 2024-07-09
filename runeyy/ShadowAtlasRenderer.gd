@@ -6,7 +6,12 @@ extends SubViewport
 var character: Node2D
 var tilemap_fg: TileMap
 var tilemap_bg: TileMap
-var light_rects := {}
+
+var unpacked_lights: Array
+
+signal started_packing
+signal finished_packing
+signal finished_packing_channel(lights: Array, channel: Color)
 
 #func _process(_delta: float) -> void:
 #	_after_process()
@@ -17,18 +22,16 @@ var light_rects := {}
 
 func _process(delta: float) -> void:
 	size = Vector2i(atlas_size, atlas_size)
-	var unpacked_lights: Array = get_tree().get_nodes_in_group(RPointLight2D.group_name)
+	
+	unpacked_lights = get_tree().get_nodes_in_group(RPointLight2D.group_name)
 	for l in unpacked_lights:
 		l.renderer = null
-	
-	if not unpacked_lights.is_empty() and (tilemap_fg == null or tilemap_bg == null):
-		push_warning("can't render lights without tilemap")
-		unpacked_lights.clear()
 	
 	unpacked_lights = unpacked_lights.filter(
 		func(a: RPointLight2D):
 			return a.visible
 	)
+	
 	if character != null:
 		# prioritize lights closer to the character
 		unpacked_lights.sort_custom(
@@ -39,6 +42,10 @@ func _process(delta: float) -> void:
 					return (a.global_position - character.global_position).length_squared() < (b.global_position - character.global_position).length_squared()
 		)
 	
+	if not unpacked_lights.is_empty() and (tilemap_fg == null or tilemap_bg == null):
+		push_warning("can't render lights without tilemap")
+		return
+	
 	var unpacked_light_rects: Array
 	unpacked_light_rects.resize(unpacked_lights.size())
 	for i in unpacked_lights.size():
@@ -48,11 +55,15 @@ func _process(delta: float) -> void:
 		rect_snapped.end = Vector2i(rect.end.ceil())
 		unpacked_light_rects[i] = rect_snapped
 	
+	started_packing.emit()
+	
 	# try packing as many into each color channel, overflowing if needed
 	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsR, Color(1, 0, 0, 0))
 	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsG, Color(0, 1, 0, 0))
 	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsB, Color(0, 0, 1, 0))
 	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsA, Color(0, 0, 0, 1))
+	
+	finished_packing.emit()
 
 func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array, regions_parent: Node, channel: Color):
 	if unpacked_lights.size() != unpacked_light_rects.size():
@@ -109,3 +120,5 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 		c.light.renderer = c
 		c.channel = channel
 		c.light_rect = packed_light_rects[i]
+	
+	finished_packing_channel.emit(packed_lights, channel)
