@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://d0cuycd3lyvyl" path="res://tileset.tres" id="1_dnwi1"]
 [ext_resource type="Script" path="res://CharacterBody2D.gd" id="2_oqvr3"]
-[ext_resource type="Texture2D" uid="uid://d0u0odtvsvl2" path="res://myfolder (=/catstyle.png" id="2_wv7ic"]
+[ext_resource type="Texture2D" uid="uid://btefslggmc3kp" path="res://myfolder (=/catstyle.png" id="2_wv7ic"]
 [ext_resource type="Script" path="res://BodyAnimator.gd" id="4_srecg"]
 [ext_resource type="Script" path="res://tail.gd" id="5_yfv7i"]
 

@@ -96,12 +96,6 @@ func _draw() -> void:
 		var bot_shadow_scale := (light.height - bg_height) / (light.height - tile_bot_height)
 		var bot_shadow_xform := Transform2D.IDENTITY.translated(-light_lpos).scaled(Vector2.ONE * bot_shadow_scale).translated(light_lpos)
 		
-		var polygon := tile_local_xform * occluder.polygon
-		draw_colored_polygon(bot_shadow_xform * polygon, bot_shadow_color)
-		
-		if is_zero_approx(tile_depth):
-			continue
-		
 		var cache_var = _cache.get(occluder.polygon)
 		
 		var src_polygon: PackedVector2Array
@@ -128,6 +122,12 @@ func _draw() -> void:
 		if src_polygon.size() != normals.size():
 			push_error("src_polygon.size() != normals.size()")
 			return
+		
+		var polygon := tile_local_xform * src_polygon
+		draw_colored_polygon(bot_shadow_xform * polygon, bot_shadow_color)
+		
+		if is_zero_approx(tile_depth):
+			continue
 		
 		if ti == light_tile_coords and is_light_inside_tile and Geometry2D.is_point_in_polygon(light_lpos, polygon):
 			draw_rect(get_rect(), full_shadow_color) # all shadow
