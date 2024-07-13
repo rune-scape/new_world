@@ -41,7 +41,6 @@ when ShadowAtlasRenderer.finished_packing_channel(lights: Array, channel: Color)
 when ShadowAtlasRenderer.finished_packing:
 	var mat: ShaderMaterial = material
 	mat.set_shader_parameter(&"shadow_atlas", ShadowAtlasRenderer.get_texture())
-	
 	mat.set_shader_parameter(&"light_count", shadow_rects)
 	mat.set_shader_parameter(&"shadow_rects", shadow_rects)
 	mat.set_shader_parameter(&"shadow_channels", shadow_channels)

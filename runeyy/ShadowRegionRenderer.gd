@@ -13,9 +13,40 @@ var debug: bool = false
 var _tile_coords: Array[Vector2i]
 #var _meshes: Array[Mesh]
 
-const MAX_BLUR_SIZE: float = 64.0
+# godot might use 16 bit floats, and with a mantissa of 10 bits, the resolution from 0 to 1 is approx 11 bits
+# have to keep it linear bc thats how vertex colors will be interpolated
+# this amnt of blur will never relly be 'used' but it will help keep consistency when vertexes are scaled very far away
+const MAX_BLUR: float = 2 ** 11 - 1 # MUST BE SYNCHRONIZED WITH SHADER
+
+#func get_max_shadow_scale() -> float:
+	#return (MAX_BLUR - 1.0) / light.light_size + 1.0
+
+# i like plugged an equasion into wolfram alpha: 's*((x-z)/(y-x)-1)=m, solve for x'
+# when used to clamp surface height
+func get_max_surface_height() -> float:
+	return (MAX_BLUR * light.height + light.light_size * (light.height + bg_height)) / (MAX_BLUR + 2 * light.light_size)
+
+func get_shadow_scale(surface_height: float) -> float:
+	surface_height = clampf(surface_height, bg_height, get_max_surface_height())
+	return (light.height - bg_height) / (light.height - surface_height)
+	#var max_shadow_scale_v := get_max_shadow_scale()
+	#if surface_height > light.height or is_equal_approx(surface_height, light.height):
+		#return max_shadow_scale_v
+	
+	#return minf(max_shadow_scale_v, (light.height - bg_height) / (light.height - surface_height))
+
+func get_shadow_blur(surface_height: float) -> float:
+	surface_height = clampf(surface_height, bg_height, get_max_surface_height())
+	return light.light_size * ((surface_height - bg_height) / (light.height - surface_height) - 1.0)
+	#var max_shadow_blur_v := MAX_BLUR - 1.0
+	#if surface_height > light.height or is_equal_approx(surface_height, light.height):
+		#return max_shadow_blur_v
+	#
+	#return clampf(light.light_size * ((surface_height - bg_height) / (light.height - surface_height) - 1.0), 0.0, max_shadow_blur_v)
+
+# have to keep it linear bc thats how vertex colors will be interpolated
 func get_shadow_color(surface_height: float) -> Color:
-	return channel * (1.0 - ((1.0 / MAX_BLUR_SIZE) * light.light_size * (surface_height - bg_height) / (light.height - surface_height)))
+	return channel * (1.0 - (get_shadow_blur(surface_height) / MAX_BLUR))
 
 static var _cache := {}
 func _draw() -> void:
@@ -70,17 +101,14 @@ func _draw() -> void:
 		var tile_pos := tilemap.map_to_local(ti) + Vector2(tile_data.texture_origin)
 		var tile_local_xform := tilemap_xform.translated_local(tile_pos).translated(-light_rect.position)
 		
-		var tile_depth: float = tile_data.get_custom_data_by_layer_id(0)
+		var tile_depth: float = absf(tile_data.get_custom_data_by_layer_id(0))
 		var tile_depth_offset: float = tile_data.get_custom_data_by_layer_id(1)
-		var tile_top_height := tile_mid_depth
-		var tile_bot_height := tile_mid_depth
-		if tile_depth > 0:
-			tile_top_height = clampf(tile_mid_depth + tile_depth * 0.5 + tile_depth_offset, bg_height, fg_height)
-			tile_bot_height = clampf(tile_mid_depth - tile_depth * 0.5 + tile_depth_offset, bg_height, fg_height)
-		var is_light_inside_tile := tile_bot_height <= light.height and light.height <= tile_top_height
-		if tile_top_height > light.height or is_equal_approx(tile_top_height, light.height):
-			tile_top_height = light.height - 0.01
-	
+		var tile_top_height := clampf(tile_mid_depth + tile_depth * 0.5 + tile_depth_offset, bg_height, fg_height)
+		var tile_bot_height := clampf(tile_mid_depth - tile_depth * 0.5 + tile_depth_offset, bg_height, fg_height)
+		
+		if light.height < tile_bot_height:
+			continue
+		
 		var top_shadow_color := get_shadow_color(tile_top_height)
 		if debug:
 			top_shadow_color = Color.GREEN
@@ -91,9 +119,9 @@ func _draw() -> void:
 			bot_shadow_color = Color.RED
 		bot_shadow_color.a = 1.0
 		
-		var top_shadow_scale := (light.height - bg_height) / (light.height - tile_top_height)
+		var top_shadow_scale := get_shadow_scale(tile_top_height)
 		var top_shadow_xform := Transform2D.IDENTITY.translated(-light_lpos).scaled(Vector2.ONE * top_shadow_scale).translated(light_lpos)
-		var bot_shadow_scale := (light.height - bg_height) / (light.height - tile_bot_height)
+		var bot_shadow_scale := get_shadow_scale(tile_bot_height)
 		var bot_shadow_xform := Transform2D.IDENTITY.translated(-light_lpos).scaled(Vector2.ONE * bot_shadow_scale).translated(light_lpos)
 		
 		var cache_var = _cache.get(occluder.polygon)
@@ -129,7 +157,8 @@ func _draw() -> void:
 		if is_zero_approx(tile_depth):
 			continue
 		
-		if ti == light_tile_coords and is_light_inside_tile and Geometry2D.is_point_in_polygon(light_lpos, polygon):
+		var is_light_inside_tile := tile_bot_height <= light.height and light.height <= tile_top_height and Geometry2D.is_point_in_polygon(light_lpos, polygon)
+		if is_light_inside_tile:
 			draw_rect(get_rect(), full_shadow_color) # all shadow
 			return
 		

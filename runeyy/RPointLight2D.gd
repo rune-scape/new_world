@@ -4,7 +4,7 @@ class_name RPointLight2D extends Node2D
 static var group_name := &"rpoint_lights"
 @export var texture: Texture2D
 @export var offset: Vector2
-@export var light_size: float
+@export_range(0, 256, 0.1) var light_size: float = 3.0
 @export var height: float = 0
 @export var color: Color = Color.WHITE
 @export_range(0, 360, 0.1, "radians_as_degrees") var range: float = PI*2
@@ -20,7 +20,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if follow:
-		global_position = get_global_mouse_position()
+		global_position = lerp(global_position, get_global_mouse_position(), 0.5)
 	if Engine.is_editor_hint():
 		queue_redraw()
 

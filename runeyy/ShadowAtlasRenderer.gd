@@ -13,13 +13,6 @@ signal started_packing
 signal finished_packing
 signal finished_packing_channel(lights: Array, channel: Color)
 
-#func _process(_delta: float) -> void:
-#	_after_process()
-
-#@onready
-#when (get_tree().process_frame):
-	#_after_process()
-
 func _process(delta: float) -> void:
 	size = Vector2i(atlas_size, atlas_size)
 	
@@ -58,10 +51,10 @@ func _process(delta: float) -> void:
 	started_packing.emit()
 	
 	# try packing as many into each color channel, overflowing if needed
-	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsR, Color(1, 0, 0, 0))
-	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsG, Color(0, 1, 0, 0))
-	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsB, Color(0, 0, 1, 0))
-	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, $ShadowRegionsA, Color(0, 0, 0, 1))
+	pack_regions_in_channel(unpacked_lights, unpacked_light_rects, %ShadowRegionsR, Color(1, 0, 0, 0))
+	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, %ShadowRegionsG, Color(0, 1, 0, 0))
+	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, %ShadowRegionsB, Color(0, 0, 1, 0))
+	#pack_regions_in_channel(unpacked_lights, unpacked_light_rects, %ShadowRegionsA, Color(0, 0, 0, 1))
 	
 	finished_packing.emit()
 
@@ -96,6 +89,7 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 	if size_diff > 0:
 		for i in size_diff:
 			var n := ShadowRegionRenderer.new()
+			n.use_parent_material = true
 			regions_parent.add_child(n)
 	elif -size_diff > packed_rects.size()*2:
 		for i in -size_diff:
@@ -111,7 +105,7 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 		c.queue_redraw()
 		var rect: Rect2i = packed_rects[i]
 		c.position = Vector2(rect.position)
-		c.debug = true
+		c.debug = false
 		c.size = Vector2(rect.size)
 		c.tilemap = tilemap_fg
 		c.fg_height = tilemap_fg.get_layer_z_index(0)

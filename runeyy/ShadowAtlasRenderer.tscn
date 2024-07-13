@@ -5,17 +5,26 @@
 [node name="ShadowAtlasRenderer" type="SubViewport"]
 process_priority = 100
 disable_3d = true
-msaa_2d = 3
 gui_disable_input = true
 sdf_oversize = 0
 sdf_scale = 2
 positional_shadow_atlas_size = 0
 script = ExtResource("1_yoikq")
 
-[node name="ShadowRegionsR" type="Node" parent="."]
+[node name="ShadowRegions" type="Node2D" parent="."]
 
-[node name="ShadowRegionsG" type="Node" parent="."]
+[node name="ShadowRegionsR" type="Node2D" parent="ShadowRegions"]
+unique_name_in_owner = true
+use_parent_material = true
 
-[node name="ShadowRegionsB" type="Node" parent="."]
+[node name="ShadowRegionsG" type="Node2D" parent="ShadowRegions"]
+unique_name_in_owner = true
+use_parent_material = true
 
-[node name="ShadowRegionsA" type="Node" parent="."]
+[node name="ShadowRegionsB" type="Node2D" parent="ShadowRegions"]
+unique_name_in_owner = true
+use_parent_material = true
+
+[node name="ShadowRegionsA" type="Node2D" parent="ShadowRegions"]
+unique_name_in_owner = true
+use_parent_material = true

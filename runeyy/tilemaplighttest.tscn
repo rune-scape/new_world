@@ -19,8 +19,8 @@ shader = ExtResource("3_47ahi")
 shader_parameter/light_count = null
 shader_parameter/shadow_rects = null
 shader_parameter/shadow_channels = null
-shader_parameter/shadow_light_positions = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256.947, 256.261)
-shader_parameter/light_positions = PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 294.947, 204.261, 0)
+shader_parameter/shadow_light_positions = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256.734, 256.878)
+shader_parameter/light_positions = PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 275.734, 126.878, 0)
 shader_parameter/shadow_atlas = SubResource("ViewportTexture_ax2gb")
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ss7f"]
@@ -94,7 +94,7 @@ light = NodePath("../TileMap2/CharacterBody2D/Node2D/PointLight2D")
 
 [node name="Sprite2D2" type="Node2D" parent="." node_paths=PackedStringArray("light")]
 process_priority = 100
-position = Vector2(294.947, 204.261)
+position = Vector2(4.3322, 248.498)
 script = ExtResource("7_8c6bp")
 light = NodePath("../TileMap2/PointLight2D4")
 
@@ -147,16 +147,17 @@ show_behind_parent = true
 position = Vector2(-16, -32)
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_dikt0")
+light_size = 0.0
 height = 20.0
 
 [node name="PointLight2D4" type="Node2D" parent="TileMap2"]
 show_behind_parent = true
-position = Vector2(294.947, 204.261)
+position = Vector2(4.3322, 248.498)
 scale = Vector2(4, 4)
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_4qx7s")
-light_size = 100.0
-height = 20.0
+light_size = 256.0
+height = 1.0
 follow = true
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="TileMap2"]
@@ -167,11 +168,12 @@ energy = 16.0
 
 [node name="PointLight2D3" type="Node2D" parent="TileMap2"]
 visible = false
-position = Vector2(294.947, 204.261)
+position = Vector2(4.01722, 248.97)
 rotation = 0.797615
 script = ExtResource("7_mgipv")
 texture = SubResource("GradientTexture2D_mkiys")
 offset = Vector2(63.35, 0)
+light_size = 0.0
 height = 10.0
 range = 1.04545
 follow = true
