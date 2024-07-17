@@ -2,13 +2,14 @@
 
 [ext_resource type="TileSet" uid="uid://d0cuycd3lyvyl" path="res://tileset.tres" id="1_dnwi1"]
 [ext_resource type="Script" path="res://CharacterBody2D.gd" id="2_oqvr3"]
-[ext_resource type="Texture2D" uid="uid://d0u0odtvsvl2" path="res://myfolder (=/catstyle.png" id="2_wv7ic"]
+[ext_resource type="Texture2D" uid="uid://befjag40jrp12" path="res://myfolder (=/kittyguy/kg_spritesheet.png" id="3_pl320"]
 [ext_resource type="Script" path="res://BodyAnimator.gd" id="4_srecg"]
 [ext_resource type="Script" path="res://tail.gd" id="5_yfv7i"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ss7f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mds1l"]
+size = Vector2(16, 15)
 
 [sub_resource type="Gradient" id="Gradient_e0cg3"]
 interpolation_mode = 2
@@ -46,19 +47,23 @@ position = Vector2(134.333, 184.333)
 script = ExtResource("2_oqvr3")
 
 [node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
-scale = Vector2(0.135, 0.135)
-texture = ExtResource("2_wv7ic")
+texture = ExtResource("3_pl320")
+hframes = 16
+vframes = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
 shape = SubResource("RectangleShape2D_mds1l")
 
 [node name="BodyAnimator" type="Node2D" parent="CharacterBody2D"]
+visible = false
 script = ExtResource("4_srecg")
 
 [node name="tail" type="Node2D" parent="CharacterBody2D"]
+visible = false
 script = ExtResource("5_yfv7i")
 
 [node name="PointLight2D" type="PointLight2D" parent="CharacterBody2D"]
+position = Vector2(-0.332993, -1.33299)
 energy = 2.0
 texture = SubResource("GradientTexture2D_c451t")
 height = 30.0
