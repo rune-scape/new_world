@@ -12,7 +12,7 @@ func updateTarget(t:Vector2):
 	target = t
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	iklimb_follow(iklimb_set[0],get_parent().global_position)
+	iklimb_follow(iklimb_set[0],get_parent().global_position-global_position)
 	queue_redraw()
 func _draw():
 	#draw_polygon(PackedVector2Array([TMPVAR,TMPVAR+Vector2(0,2),TMPVAR+Vector2(2,2),TMPVAR+Vector2(2,0)]),PackedColorArray([Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1),Color(1,0,0,1)]))
@@ -22,6 +22,7 @@ func _draw():
 	for limb in iklimb_set:
 		var i = 0
 		for seg in limb:
-			draw_line(seg.pos-pl_pos,ikseg_getEnd(seg)-pl_pos,Color.WHITE,2)
+			#draw_line(seg.pos-pl_pos,ikseg_getEnd(seg)-pl_pos,Color.WHITE,2)
+			draw_line(seg.pos,ikseg_getEnd(seg),Color.WHITE,2)
 			#draw_line(seg.pos,ikseg_getEnd(seg),Color.WHITE,2)
 			i+=1
