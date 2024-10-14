@@ -16,7 +16,7 @@ var _tile_coords: Array[Vector2i]
 # godot might use 16 bit floats, and with a mantissa of 10 bits, the resolution from 0 to 1 is approx 11 bits
 # have to keep it linear bc thats how vertex colors will be interpolated
 # this amnt of blur will never relly be 'used' but it will help keep consistency when vertexes are scaled very far away
-const MAX_BLUR: float = 2 ** 11 - 1 # MUST BE SYNCHRONIZED WITH SHADER
+const MAX_BLUR: float = pow(2.0, 8.0) - 1.0 # MUST BE SYNCHRONIZED WITH SHADER
 
 #func get_max_shadow_scale() -> float:
 	#return (MAX_BLUR - 1.0) / light.light_size + 1.0
@@ -37,7 +37,7 @@ func get_shadow_scale(surface_height: float) -> float:
 
 func get_shadow_blur(surface_height: float) -> float:
 	surface_height = clampf(surface_height, bg_height, get_max_surface_height())
-	return light.light_size * ((surface_height - bg_height) / (light.height - surface_height) - 1.0)
+	return light.light_size * ((surface_height - bg_height) / (light.height - surface_height))
 	#var max_shadow_blur_v := MAX_BLUR - 1.0
 	#if surface_height > light.height or is_equal_approx(surface_height, light.height):
 		#return max_shadow_blur_v
@@ -46,7 +46,7 @@ func get_shadow_blur(surface_height: float) -> float:
 
 # have to keep it linear bc thats how vertex colors will be interpolated
 func get_shadow_color(surface_height: float) -> Color:
-	return channel * (1.0 - (get_shadow_blur(surface_height) / MAX_BLUR))
+	return channel * ((get_shadow_blur(surface_height) / 2.0 + 1.0) / MAX_BLUR)
 
 static var _cache := {}
 func _draw() -> void:

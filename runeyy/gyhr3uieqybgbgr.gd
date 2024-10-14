@@ -3,7 +3,7 @@ extends Node2D
 
 @export var light: RPointLight2D
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:

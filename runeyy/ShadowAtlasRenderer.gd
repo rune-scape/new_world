@@ -1,7 +1,8 @@
 @tool
 extends SubViewport
 
-@export var atlas_size: int = 512
+@export_range(512, 2048) var atlas_size: int = 512
+@export_range(0.5, 2.0) var scale: float = 1.0
 
 var character: Node2D
 var tilemap_fg: TileMap
@@ -13,7 +14,7 @@ signal started_packing
 signal finished_packing
 signal finished_packing_channel(lights: Array, channel: Color)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	size = Vector2i(atlas_size, atlas_size)
 	
 	unpacked_lights = get_tree().get_nodes_in_group(RPointLight2D.group_name)
@@ -44,8 +45,9 @@ func _process(delta: float) -> void:
 	for i in unpacked_lights.size():
 		var rect: Rect2 = unpacked_lights[i].get_rect()
 		var rect_snapped: Rect2i
-		rect_snapped.position = Vector2i(rect.position.floor())
-		rect_snapped.end = Vector2i(rect.end.ceil())
+		# scalify it
+		rect_snapped.position = Vector2i((rect.position * scale).floor())
+		rect_snapped.end = Vector2i((rect.end * scale).ceil())
 		unpacked_light_rects[i] = rect_snapped
 	
 	started_packing.emit()
@@ -63,11 +65,8 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 		push_error("unpacked_lights.size() != unpacked_region_sizes.size()")
 		return
 	
-	if unpacked_lights.is_empty():
-		return
-	
 	var packed_rects := []
-	var _packed_size := RectPack2D.pack(packed_rects, unpacked_light_rects.map(func(r: Rect2i) -> Vector2: return r.size), 1000)
+	var _packed_size := RectPack2D.pack(packed_rects, unpacked_light_rects.map(func(r: Rect2i) -> Vector2: return r.size), atlas_size)
 	
 	var packed_lights: Array[RPointLight2D]
 	var packed_light_rects: Array[Rect2i]
@@ -104,15 +103,18 @@ func pack_regions_in_channel(unpacked_lights: Array, unpacked_light_rects: Array
 		c.visible = true
 		c.queue_redraw()
 		var rect: Rect2i = packed_rects[i]
+		var light_rect: Rect2 = packed_light_rects[i]
 		c.position = Vector2(rect.position)
 		c.debug = false
-		c.size = Vector2(rect.size)
+		c.size = Vector2(rect.size) / scale
+		c.scale = Vector2.ONE * scale
 		c.tilemap = tilemap_fg
 		c.fg_height = tilemap_fg.get_layer_z_index(0)
 		c.bg_height = tilemap_bg.get_layer_z_index(0)
 		c.light = packed_lights[i]
 		c.light.renderer = c
 		c.channel = channel
-		c.light_rect = packed_light_rects[i]
+		# descalify it
+		c.light_rect = Rect2(light_rect.position / scale, light_rect.size / scale)
 	
 	finished_packing_channel.emit(packed_lights, channel)
