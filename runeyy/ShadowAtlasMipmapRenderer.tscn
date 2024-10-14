@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://bl84vi8o342vh"]
+[gd_scene load_steps=2 format=3 uid="uid://bl84vi8o342vh"]
 
-[node name="Node" type="Node"]
+[ext_resource type="Script" path="res://runeyy/ShadowAtlasMipmapRenderer.gd" id="1_qw0su"]
+
+[node name="ShadowAtlasMipmapRenderer" type="Node"]
+script = ExtResource("1_qw0su")
