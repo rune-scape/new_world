@@ -73,7 +73,7 @@ void fragment() {
 	int real_light_count = min(light_count, MAX_LIGHT_COUNT);
 	int real_blur_sample_count = min(blur_sample_count, MAX_BLUR_SAMPLE_COUNT);
 	
-	float light = 1.0;
+	float light = 0.0;
 	for (int i = 0; i < real_light_count; i++) {
 		vec4 shadow_screen_rect = shadow_screen_rects[i];
 		if (!is_in_rect(screen_pixel, shadow_screen_rect)) {
@@ -82,9 +82,11 @@ void fragment() {
 		vec2 shadow_atlas_pos = shadow_atlas_positions[i];
 		vec4 shadow_channel = shadow_channels[i];
 		vec3 light_position = light_positions[i];
+		vec2 light_size = (shadow_screen_rect.zw - shadow_screen_rect.xy) * 0.5;
 		vec2 shadow_atlas_pixel = shadow_atlas_pos + ((screen_pixel - shadow_screen_rect.xy) * shadow_atlas_scale);
 		vec2 shadow_atlas_uv = shadow_atlas_pixel * shadow_atlas_pixel_size;
 		
+		light += 1.0 / (pow(length((screen_pixel - light_position.xy) / light_size * 2.0), 5.0) + 1.0);
 		float shadow_v = get_channel_value(texture(shadow_atlas, shadow_atlas_uv), shadow_channel);
 		//if (shadow_v == 0.0) {
 			//continue;
@@ -110,7 +112,7 @@ void fragment() {
 			//vec2 blur_sample = vec2(cos(blur_sample_theta), sin(blur_sample_theta)) * blur_sample_len;
 			vec2 blur_sample = blur_samples[s].xy;
 			//vec3 blur_sample = vec3(float(x-4), float(y-4), 0.0) / 5.0;
-			float th = floor(pixel_randf * 8.0) / 8.0 * 2.0 * TAU;
+			float th = floor(pixel_randf * 16.0) / 16.0 * 2.0 * TAU;
 			float s = sin(th);
 			float c = cos(th);
 			blur_sample.xy = mat2(
@@ -126,7 +128,8 @@ void fragment() {
 			//}
 			float sample_dist_sq = blur_sample_ofs.x * blur_sample_ofs.x + blur_sample_ofs.y * blur_sample_ofs.y;
 			float sblur_radius = shadow_v * MAX_BLUR - 1.0;
-			shadow_accum += (sblur_radius / search_dist);
+			//if () {}
+			shadow_accum += sblur_radius;
 			
 			//float sblur_radius_sq = sblur_radius * sblur_radius;
 			//if (sample_dist_sq <= sblur_radius_sq) {
@@ -138,9 +141,9 @@ void fragment() {
 		//}
 		//}
 		}
-		light -= shadow_accum / float(real_blur_sample_count);
+		light -= pow(max(shadow_accum, 0.0) / float(real_blur_sample_count) / search_dist, 0.4);
 	}
-	light = pow(light, 2.9);
+	//light = pow(light, 3.5);
 	COLOR = vec4(light, light, light, 1.0);
 }
 
